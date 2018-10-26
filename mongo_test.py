@@ -17,6 +17,23 @@ client = pymongo.MongoClient('localhost', 27017)
 db = client['chapter3']
 collection = db['income']
 
+# with open('income_header.txt') as f_in:
+# 	columns_headings = f_in.readline()
+
+# columns_headings_list = columns_headings.split(',')
+
+# row_dict_list = list()
+# with open('income.txt') as f_in:
+# 	for line in f_in:
+# 		row_list = line.rstrip('\n').split(',')
+# 		row_dict = dict(zip(columns_headings_list, row_list))
+# 		row_dict_list.append(row_dict)
+# 		collection.insert_one(row_dict)
+
+# print(collection.count())
+
+collection.delete_many({})
+
 with open('income_header.txt') as f_in:
 	columns_headings = f_in.readline()
 
@@ -27,7 +44,12 @@ with open('income.txt') as f_in:
 	for line in f_in:
 		row_list = line.rstrip('\n').split(',')
 		row_dict = dict(zip(columns_headings_list, row_list))
-		row_dict_list.append(row_dict)
-		collection.insert_one(row_dict)
+		try:
+			row_dict['age'] = int(row_dict['age'])
+			collection.insert_one(row_dict)
+		except:
+			pass
 
-print(collection.count())
+over_35 = collection.find({'age': {"$gt": 35}})
+print(over_35.next())
+print(over_35.count())
